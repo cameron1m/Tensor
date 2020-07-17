@@ -1,0 +1,5 @@
+import
+function test(){
+    
+}
+test();
