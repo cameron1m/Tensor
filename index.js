@@ -1,15 +1,43 @@
-function setup(){
-    const values = [];
-    for(let i = 0; i < 15; i++){
-        values[i] = Math.random()*100;
-    }
-    const shape = [5,3];
 
+let mobilenet;
+let video;
+let label = '';
+function modelReady() {
+  console.log('Model is ready!!!');
 
+    mobilenet.predict(gotResults);
 
-    const data = tf.tensor(values, shape)
-
-    console.log(data.toString());
-    // console.log(data);
 }
-setup();
+
+function gotResults(error, results) {
+  if (error) {
+    console.error(error);
+  } else {
+    // console.log(results);
+    label = results[0].label;
+  
+    mobilenet.predict(gotResults);
+
+  }
+}
+
+// function imageReady() {
+//   image(video, 0, 0, width, height);
+// }
+
+function setup() {
+  createCanvas(640, 550);
+  video = createCapture(VIDEO);
+  video.hide();
+  background(0);
+  mobilenet = ml5.imageClassifier('MobileNet', video, modelReady);
+}
+
+function draw(){
+  background(0);
+  image(video, 0, 0);
+  fill('red');
+  textSize(32);
+
+  text(label, 10, 510);
+}
