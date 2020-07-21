@@ -1,12 +1,14 @@
 
 let mobilenet;
 let video;
-let predictor;
-let value = 0;
+let classifier;
+let value = 'needs training';
 let sampleButton;
 let saveButton;
 let trainButton;
-let slider;
+// let slider;
+let handButton;
+let cdButton;
 
 function modelReady() {
   console.log('Model is Ready!!');
@@ -24,16 +26,16 @@ function gotResults(error, result) {
     console.error(error);
   } else {
     // console.log(results);
-    value = result.value;
+    value = result[0].label;
   
-    predictor.predict(gotResults);
+    classifier.classify(gotResults);
 
   }
 }
 function whileTraining(loss){
   if (loss == null){
     console.log('Training Comeplete!');
-    predictor.predict(gotResults);
+    classifier.classify(gotResults);
   }
   else {
     console.log(loss);
@@ -50,19 +52,31 @@ function setup() {
   video.hide();
   background(0);
   mobilenet = ml5.featureExtractor('MobileNet', modelReady);
-  predictor = mobilenet.regression(video, videoReady);
+  classifier = mobilenet.classification(video, videoReady);
   
-  sampleButton = createButton('Add Sample');
+  // sampleButton = createButton('Add Sample');
 
-  sampleButton.mousePressed(function(){
-     predictor.addImage(slider.value());
+  // sampleButton.mousePressed(function(){
+  //    classifier.addImage(slider.value());
 
+  // });
+
+  cdButton = createButton('CD');
+
+  cdButton.mousePressed(function(){
+    classifier.addImage('CD');
+  });
+
+  handButton = createButton('Hand');
+
+  handButton.mousePressed(function(){
+    classifier.addImage('Hand');
   });
 
   trainButton = createButton('Train');
 
   trainButton.mousePressed(function(){
-    predictor.train(whileTraining);
+    classifier.train(whileTraining);
   });
   
   saveButton = createButton('Save');
@@ -77,7 +91,7 @@ function setup() {
   //   featureExtractor.load();
   // });
   
-  slider = createSlider(0,1,0.5,0.01);
+  // slider = createSlider(0,1,0.5,0.01);
 
 }
 
@@ -87,7 +101,7 @@ function draw(){
   rectMode(CENTER);
   fill('red');
   textSize(32);
-  rect(value*width, height / 2,50,50);
+  // rect(value*width, height / 2,50,50);
 
   text(value, 10, 510);
 }
