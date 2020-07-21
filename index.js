@@ -1,38 +1,39 @@
 
 let mobilenet;
 let video;
-let classifier;
-let label = '';
-let cdButton;
+let predictor;
+let value = 0;
+let sampleButton;
 let handButton;
 let trainButton;
+let slider;
 
 function modelReady() {
-  console.log('Model is ready!!!');
+  console.log('Model is Ready!!');
 
     //mobilenet.predict(gotResults);
 
 }
 
 function videoReady(){
-  console.log("Video is Ready");
+  console.log("Video is Ready!!");
 }
 
-function gotResults(error, results) {
+function gotResults(error, result) {
   if (error) {
     console.error(error);
   } else {
     // console.log(results);
-    label = results[0].label;
+    value = result.value;
   
-    classifier.classify(gotResults);
+    predictor.predict(gotResults);
 
   }
 }
 function whileTraining(loss){
   if (loss == null){
     console.log('Training Comeplete!');
-    classifier.classify(gotResults);
+    predictor.predict(gotResults);
   }
   else {
     console.log(loss);
@@ -49,32 +50,32 @@ function setup() {
   video.hide();
   background(0);
   mobilenet = ml5.featureExtractor('MobileNet', modelReady);
-  classifier = mobilenet.classification(video, videoReady);
+  predictor = mobilenet.regression(video, videoReady);
   
-  cdButton = createButton('CD');
+  sampleButton = createButton('Add Sample');
 
-  cdButton.mousePressed(function(){
-    classifier.addImage('CD');
-  });
+  sampleButton.mousePressed(function(){
+     predictor.addImage(slider.value());
 
-  handButton = createButton('Hand');
-
-  handButton.mousePressed(function(){
-    classifier.addImage('Hand');
   });
 
   trainButton = createButton('Train');
 
   trainButton.mousePressed(function(){
-    classifier.train(whileTraining);
+    predictor.train(whileTraining);
   });
+
+  slider = createSlider(0,1,0.5,0.01);
+
 }
 
 function draw(){
   background(0);
   image(video, 0, 0);
+  rectMode(CENTER);
   fill('red');
   textSize(32);
+  rect(value*width, height / 2,50,50);
 
-  text(label, 10, 510);
+  text(value, 10, 510);
 }
