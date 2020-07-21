@@ -4,7 +4,7 @@ let video;
 let predictor;
 let value = 0;
 let sampleButton;
-let handButton;
+let saveButton;
 let trainButton;
 let slider;
 
@@ -64,7 +64,19 @@ function setup() {
   trainButton.mousePressed(function(){
     predictor.train(whileTraining);
   });
+  
+  saveButton = createButton('Save');
 
+  saveButton.mousePressed(function(){
+    classifier.save();
+  });
+
+  // loadButton = createButton('Load');
+
+  // loadButton.mousePressed(function(){
+  //   featureExtractor.load();
+  // });
+  
   slider = createSlider(0,1,0.5,0.01);
 
 }
